@@ -18,7 +18,7 @@ import {
 
       
       if (!token) {
-        console.error('No token found');
+        // console.error('No token found');
         throw new UnauthorizedException();
       }
   
