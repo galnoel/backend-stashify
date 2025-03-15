@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { CreateStockItemDto, StockItem, UpdateStockItemDto } from './stock.entity';
 
@@ -30,15 +30,27 @@ export class StockService {
     return data;
   }
 
-  async findAll(): Promise<StockItem[]> {
-    const { data, error } = await this.supabase
+  async findAll(
+    startDate?: string,
+    endDate?: string,
+    sort: 'asc' | 'desc' = 'desc'
+  ): Promise<StockItem[]> {
+    let query = this.supabase
       .from('stock')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      throw new Error(`Supabase error [${error.code}]: ${error.message}`);
+      .select('*');
+  
+    // Date filter
+    if (startDate && endDate) {
+      query = query.gte('created_at', startDate)
+                   .lte('created_at', endDate);
     }
+  
+    // Sorting
+    query = query.order('created_at', { ascending: sort === 'asc' });
+  
+    const { data, error } = await query;
+    
+    if (error) throw new InternalServerErrorException(error.message);
     return data;
   }
 

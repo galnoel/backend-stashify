@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
 import { StockService } from './stock.service';
 import { CreateStockItemDto, StockItem, UpdateStockItemDto } from './stock.entity';
 import { JwtGuard } from './auth/auth.guard';
@@ -18,8 +18,12 @@ export class StockController {
   }
 
   @Get()
-  findAll(): Promise<StockItem[]> {
-    return this.stockService.findAll();
+  async findAll(
+    @Query('start_date') startDate?: string,
+    @Query('end_date') endDate?: string,
+    @Query('sort') sort: 'asc' | 'desc' = 'desc'
+  ): Promise<StockItem[]> {
+    return this.stockService.findAll(startDate, endDate, sort);
   }
 
   @Get(':id')
@@ -40,3 +44,4 @@ export class StockController {
     return this.stockService.remove(id);
   }
 }
+
