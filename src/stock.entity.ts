@@ -17,6 +17,7 @@ export class CreateStockItemDto {
   @IsNotEmpty()
   name: string;
 
+  @IsOptional()
   @IsString()
   description?: string;
 
