@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { hostname } from 'os';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
+
 dotenv.config();
 
 
@@ -20,6 +22,7 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe());
+  app.use(cookieParser());
 
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
