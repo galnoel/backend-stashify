@@ -12,36 +12,44 @@ export class StockController {
   @Post()
   create(
     @Body() createDto: CreateStockItemDto,
-    // @GetUser() user: any
+    @GetUser() user: { id: string },
   ): Promise<StockItem> {
-    return this.stockService.create(createDto);
+    return this.stockService.create(createDto, user.id);
   }
 
   @Get()
   async findAll(
+    @GetUser() user: {id: string},
     @Query('start_date') startDate?: string,
     @Query('end_date') endDate?: string,
     @Query('sort') sort: 'asc' | 'desc' = 'desc'
   ): Promise<StockItem[]> {
-    return this.stockService.findAll(startDate, endDate, sort);
+    return this.stockService.findAll(user.id, startDate, endDate, sort);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<StockItem> {
-    return this.stockService.findOne(id);
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: {id: string},
+  ): Promise<StockItem> {
+    return this.stockService.findOne(id, user.id);
   }
 
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateDto: UpdateStockItemDto
+    @Body() updateDto: UpdateStockItemDto,
+    @GetUser() user: {id: string},
   ): Promise<StockItem> {
-    return this.stockService.update(id, updateDto);
+    return this.stockService.update(id, updateDto, user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.stockService.remove(id);
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: {id: string},
+  ): Promise<void> {
+    return this.stockService.remove(id, user.id);
   }
 }
 

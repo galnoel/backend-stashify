@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { CreateStockItemDto, StockItem, UpdateStockItemDto } from './stock.entity';
+import { userInfo } from 'os';
 
 @Injectable()
 export class StockService {
@@ -17,10 +18,10 @@ export class StockService {
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
-  async create(item: CreateStockItemDto): Promise<StockItem> {
+  async create(item: CreateStockItemDto, userId:string): Promise<StockItem> {
     const { data, error } = await this.supabase
       .from('stock')
-      .insert([item])
+      .insert([{ ...item, user_id: userId }])
       .select()
       .single();
 
@@ -31,13 +32,15 @@ export class StockService {
   }
 
   async findAll(
+    userId: string,
     startDate?: string,
     endDate?: string,
     sort: 'asc' | 'desc' = 'desc'
   ): Promise<StockItem[]> {
     let query = this.supabase
       .from('stock')
-      .select('*');
+      .select('*')
+      .eq('user_id', userId);  // Add user filter
   
     // Date filter
     if (startDate && endDate) {
@@ -54,11 +57,12 @@ export class StockService {
     return data;
   }
 
-  async findOne(id: string): Promise<StockItem> {
+  async findOne(id: string, userId:string): Promise<StockItem> {
     const { data, error } = await this.supabase
       .from('stock')
       .select('*')
       .eq('id', id)
+      .eq('user_id', userId) // Critical security check
       .single();
 
     if (error) {
@@ -70,11 +74,12 @@ export class StockService {
     return data;
   }
 
-  async update(id: string, updateDto: UpdateStockItemDto): Promise<StockItem> {
+  async update(id: string, updateDto: UpdateStockItemDto, userId: string): Promise<StockItem> {
     const { data, error } = await this.supabase
       .from('stock')
       .update({ ...updateDto, updated_at: new Date().toISOString() })
       .eq('id', id)
+      .eq('user_id', userId) // Critical security check
       .select()
       .single();
 
@@ -87,11 +92,12 @@ export class StockService {
     return data;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, userId:string): Promise<void> {
     const { error } = await this.supabase
       .from('stock')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', userId); // Critical security check
 
     if (error) {
       if (error.code === 'PGRST116') {
