@@ -6,6 +6,7 @@ import { StockService } from './stock.service';
 import { AuthController } from './auth/auth.contoller';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.SUPABASE_JWT_SECRET,
 })],
   controllers: [AppController, StockController, AuthController],
-  providers: [AppService, StockService, AuthService],
+  providers: [AppService, StockService, AuthService, JwtStrategy],
 })
 export class AppModule {}
