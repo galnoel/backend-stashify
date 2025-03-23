@@ -7,7 +7,7 @@ export class StockItem {
     quantity: number;
     price: number;
     product_type: string;
-    expired_date?: Date;
+    // expired_date?: Date;
     created_at: Date;
     updated_at: Date;
   }
@@ -33,9 +33,9 @@ export class CreateStockItemDto {
   @IsNotEmpty()
   product_type: string;
 
-  @IsDateString()
-  @IsOptional()
-  expired_date?: Date;
+  // @IsDateString()
+  // @IsOptional()
+  // expired_date?: Date;
 }
 
 export class UpdateStockItemDto {
@@ -61,7 +61,7 @@ export class UpdateStockItemDto {
   @IsOptional()
   product_type?: string;
 
-  @IsDateString()
-  @IsOptional()
-  expired_date?: Date;
+  // @IsDateString()
+  // @IsOptional()
+  // expired_date?: Date;
 }
