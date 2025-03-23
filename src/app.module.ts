@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { StockController } from './stock.controller';
-import { StockService } from './stock.service';
+import { StockController } from './stock/stock.controller';
+import { StockService } from './stock/stock.service';
 import { AuthController } from './auth/auth.contoller';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';

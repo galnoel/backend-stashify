@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
 import { StockService } from './stock.service';
 import { CreateStockItemDto, StockItem, UpdateStockItemDto } from './stock.entity';
-import { JwtGuard } from './auth/auth.guard';
-import { GetUser } from './auth/user.decorator';
+import { JwtGuard } from '../auth/auth.guard';
+import { GetUser } from '../auth/user.decorator';
 
 @Controller('stock')
 @UseGuards(JwtGuard)//for all routes
