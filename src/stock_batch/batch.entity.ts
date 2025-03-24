@@ -14,9 +14,9 @@ export class StockBatch {
   
     product_id: string;
 
-    @IsString()
-    @Length(3,20)
-    batch_number: string;
+    // @IsString()
+    // @Length(3,20)
+    // batch_number: string;
   
     @IsDateString()
     expired_date: string;
