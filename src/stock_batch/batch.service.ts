@@ -33,7 +33,7 @@ export class StockBatchService {
           // .eq('batch_number', dto.batch_number)
           // .maybeSingle();
     
-        console.log('Check result:', { existingBatch, checkError });
+        // console.log('Check result:', { existingBatch, checkError });
     
         // if (existingBatch) {
         //   console.log('Conflict detected:', existingBatch);
