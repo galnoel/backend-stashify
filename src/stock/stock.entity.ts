@@ -17,9 +17,9 @@ export class CreateStockItemDto {
   @IsNotEmpty()
   name: string;
 
-  @IsOptional()
-  @IsString()
-  description?: string;
+  // @IsOptional()
+  // @IsString()
+  // description?: string = 'description';
 
   @IsInt()
   @IsPositive()
@@ -34,9 +34,9 @@ export class CreateStockItemDto {
   @IsNotEmpty()
   product_type: string;
 
-  // @IsDateString()
-  // @IsOptional()
-  // expired_date?: Date;
+  @IsDateString()
+  @IsOptional()
+  expired_date?: Date;
 }
 
 export class UpdateStockItemDto {

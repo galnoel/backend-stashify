@@ -18,12 +18,25 @@ export class StockService {
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
-  async create(item: CreateStockItemDto, userId:string): Promise<StockItem> {
-    const { data, error } = await this.supabase
-      .from('stock')
-      .insert([{ ...item, user_id: userId }])
-      .select()
-      .single();
+  async create(dto: CreateStockItemDto, userId:string): Promise<StockItem> {
+    // const { data, error } = await this.supabase
+    //   .from('stock')
+    //   .insert([{ ...item, user_id: userId }])
+    //   .select()
+    //   .single();
+    const { data, error } = await this.supabase.rpc(
+      'create_product_with_initial_batch', 
+      {
+        p_name: dto.name,
+        // p_description: dto.description,
+        p_price: dto.price,
+        p_quantity: dto.quantity,
+        p_product_type: dto.product_type,
+        p_expired_date: dto.expired_date,
+        p_user_id: userId
+      }
+    ).select()
+    .single();
 
     if (error) {
       throw new Error(`Supabase error [${error.code}]: ${error.message}`);
