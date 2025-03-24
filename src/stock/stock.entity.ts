@@ -23,6 +23,7 @@ export class CreateStockItemDto {
 
   @IsInt()
   @IsPositive()
+  @IsOptional()
   quantity: number;
 
   @IsNumber()
