@@ -18,7 +18,7 @@ export class StockBatchService {
       this.supabase = createClient(supabaseUrl, supabaseKey);
     }
 
-    async createBatch(dto: CreateStockBatchDto): Promise<StockBatch> {
+    async createBatch(dto: CreateStockBatchDto, userId:string): Promise<StockBatch> {
       try {
         // Debug: Log the check query
         // console.log('Checking for existing batch with:', {
@@ -40,9 +40,10 @@ export class StockBatchService {
         //   throw new ConflictException('Batch already exists');
         // }
     
-        const { data: newBatch, error: insertError } = await this.supabase
+        const { data: newBatch, error: insertError} = await this.supabase
           .from('stock_batches')
-          .insert(dto)
+          .insert([{ ...dto, user_id: userId }])
+          .select()
           .single();
 
         if (insertError) {

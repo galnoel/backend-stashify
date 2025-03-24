@@ -15,8 +15,11 @@ export class StockBatchController {
   ) {}
 
   @Post()
-  createBatch(@Body() dto: CreateStockBatchDto, @GetUser() user: any) {
-    return this.stockBatchService.createBatch(dto);
+  createBatch(
+    @Body() dto: CreateStockBatchDto, 
+    @GetUser() user: { id: string }
+  ) {
+    return this.stockBatchService.createBatch(dto, user.id);
   }
 
   @Post(':id/adjust')
