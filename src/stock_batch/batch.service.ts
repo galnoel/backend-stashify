@@ -57,7 +57,33 @@ export class StockBatchService {
         throw error;
       }
     }
-
+  
+  async findAll(
+      userId: string,
+      startDate?: string,
+      endDate?: string,
+      sort: 'asc' | 'desc' = 'desc'
+    ): Promise<StockBatch[]> {
+      let query = this.supabase
+        .from('stock_batches')
+        .select('*')
+        .eq('user_id', userId);  // Add user filter
+    
+      // Date filter
+      if (startDate && endDate) {
+        query = query.gte('created_at', startDate)
+                     .lte('created_at', endDate);
+      }
+    
+      // Sorting
+      query = query.order('created_at', { ascending: sort === 'asc' });
+    
+      const { data, error } = await query;
+      
+      if (error) throw new InternalServerErrorException(error.message);
+      return data;
+    }
+  
   async adjustStock(batchId: string, dto: CreateStockMovementDto, userId: string) {
     return this.supabase.rpc('handle_stock_adjustment', {
       p_batch_id: batchId,

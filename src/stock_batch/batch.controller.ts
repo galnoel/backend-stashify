@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
-import { CreateStockBatchDto } from './batch.entity';
+import { CreateStockBatchDto, StockBatch } from './batch.entity';
 import { StockBatchService } from './batch.service';
 import { StockMovementService } from '../stock_movement/movement.service';
 import { CreateStockMovementDto } from '../stock_movement/movement.entity';
@@ -21,6 +21,16 @@ export class StockBatchController {
   ) {
     return this.stockBatchService.createBatch(dto, user.id);
   }
+
+  @Get()
+    async findAll(
+      @GetUser() user: {id: string},
+      @Query('start_date') startDate?: string,
+      @Query('end_date') endDate?: string,
+      @Query('sort') sort: 'asc' | 'desc' = 'desc'
+    ): Promise<StockBatch[]> {
+      return this.stockBatchService.findAll(user.id, startDate, endDate, sort);
+    }
 
   @Post(':id/adjust')
   adjustStock(
