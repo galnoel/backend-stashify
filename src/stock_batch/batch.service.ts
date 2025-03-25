@@ -89,10 +89,10 @@ export class StockBatchService {
       if (error) throw new InternalServerErrorException(error.message);
     
       // Map the nested products data to flat structure
-      return data.map(batch => ({
-        ...batch,
-        product_name: batch.stock?.name || 'N/A',
-        product_type: batch.stock?.product_type || 'N/A'
+      return data.map(({ stock, ...batch }) => ({
+        ...batch,  // Keep all batch properties except 'stock'
+        product_name: stock?.name || 'N/A',
+        product_type: stock?.product_type || 'N/A'
       }));
     }
   
