@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { SupabaseClient, createClient} from '@supabase/supabase-js';
-import { CreateStockBatchDto, StockBatch } from './batch.entity';
+import { CreateStockBatchDto, StockBatch, StockBatchWithProductDto } from './batch.entity';
 import { CreateStockMovementDto } from '../stock_movement/movement.entity';
 
 @Injectable()
@@ -58,16 +58,22 @@ export class StockBatchService {
       }
     }
   
-  async findAll(
+    async findAll(
       userId: string,
       startDate?: string,
       endDate?: string,
       sort: 'asc' | 'desc' = 'desc'
-    ): Promise<StockBatch[]> {
+    ): Promise<StockBatchWithProductDto[]> {
       let query = this.supabase
         .from('stock_batches')
-        .select('*')
-        .eq('user_id', userId);  // Add user filter
+        .select(`
+          *,
+          stock!inner(
+            name,
+            product_type
+          )
+        `)
+        .eq('user_id', userId);
     
       // Date filter
       if (startDate && endDate) {
@@ -79,9 +85,15 @@ export class StockBatchService {
       query = query.order('created_at', { ascending: sort === 'asc' });
     
       const { data, error } = await query;
-      
+    
       if (error) throw new InternalServerErrorException(error.message);
-      return data;
+    
+      // Map the nested products data to flat structure
+      return data.map(batch => ({
+        ...batch,
+        product_name: batch.stock?.name || 'N/A',
+        product_type: batch.stock?.product_type || 'N/A'
+      }));
     }
   
   async adjustStock(batchId: string, dto: CreateStockMovementDto, userId: string) {

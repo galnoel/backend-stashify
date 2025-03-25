@@ -9,6 +9,18 @@ export class StockBatch {
     created_at: Date;
     updated_at: Date;
   }
+
+export class StockBatchWithProductDto {
+  id: string;
+  product_id: string;
+  batch_number: string;
+  expired_date: Date;
+  quantity: number;
+  created_at: Date;
+  updated_at: Date;
+  product_name: string;
+  product_type: string;
+}
   
   export class CreateStockBatchDto {
   
