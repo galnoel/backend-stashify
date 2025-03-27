@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { CreateStockMovementDto, StockMovementResponseDto } from './movement.entity';
+import { CreateStockMovementDto, StockMovementDto } from './movement.entity';
 
 @Injectable()
 export class StockMovementService {
@@ -27,5 +27,14 @@ export class StockMovementService {
 
     if (error) throw new NotFoundException('No movements found');
     return data;
+  }
+
+  async createStockMovement(dto: CreateStockMovementDto, userId: string) {
+    return this.supabase.rpc('handle_stock_adjustment', {
+      p_batch_id: dto.batch_id,
+      p_quantity: dto.quantity,
+      p_type: dto.movement_type,
+      p_user_id: userId
+    });
   }
 }

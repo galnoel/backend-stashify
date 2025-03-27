@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { SupabaseClient, createClient} from '@supabase/supabase-js';
 import { CreateStockBatchDto, StockBatch, StockBatchWithProductDto } from './batch.entity';
-import { CreateStockMovementDto } from '../stock_movement/movement.entity';
+import { CreateStockMovementDto } from './batch.entity';
 
 @Injectable()
 export class StockBatchService {

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsInt, IsPositive, IsDateString, Length} from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsPositive, IsDateString, Length, IsEnum} from 'class-validator';
 
 export class StockBatch {
     id: string;
@@ -43,5 +43,14 @@ export class StockBatchWithProductDto {
     @IsPositive()
     quantity: number;
   }
+
+  export class CreateStockMovementDto {  
+      @IsEnum(['IN', 'OUT'])
+      movement_type: 'IN' | 'OUT';
+    
+      @IsInt()
+      @IsPositive()
+      quantity: number;
+    }
 
 

@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
-import { CreateStockBatchDto, StockBatch } from './batch.entity';
+import { CreateStockBatchDto, StockBatch, CreateStockMovementDto } from './batch.entity';
 import { StockBatchService } from './batch.service';
 import { StockMovementService } from '../stock_movement/movement.service';
-import { CreateStockMovementDto } from '../stock_movement/movement.entity';
 import { JwtGuard } from '../auth/auth.guard';
 import { GetUser } from '../auth/user.decorator';
 

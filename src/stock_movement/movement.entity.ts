@@ -19,7 +19,7 @@ import {
   }
   
   // RESPONSE DTO
-  export class StockMovementResponseDto {
+  export class StockMovementDto {
     id: string;
     batch_id: string;
     movement_type: 'IN' | 'OUT';
