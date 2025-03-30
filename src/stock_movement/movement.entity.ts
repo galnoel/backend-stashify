@@ -18,7 +18,6 @@ import {
     quantity: number;
   }
   
-  // RESPONSE DTO
   export class StockMovementDto {
     id: string;
     batch_id: string;
@@ -26,6 +25,25 @@ import {
     quantity: number;
     movement_date: Date;
     user_id: string;
+    product_id: string;
+    // The joined product details
+    products: {
+      name: string;
+    }
+  }
+  // RESPONSE DTO
+  export class StockMovementWithProductDto {
+    id: string;
+    batch_id: string;
+    movement_type: 'IN' | 'OUT';
+    quantity: number;
+    movement_date: Date;
+    user_id: string;
+    product_id: string;
+    // The joined product details
+    products: {
+      name: string;
+    }
   }
   
  

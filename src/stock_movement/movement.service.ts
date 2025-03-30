@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { CreateStockMovementDto, StockMovementDto } from './movement.entity';
+import { CreateStockMovementDto, StockMovementDto, StockMovementWithProductDto } from './movement.entity';
 
 @Injectable()
 export class StockMovementService {
@@ -20,12 +20,52 @@ export class StockMovementService {
   async getBatchMovements(batchId: string, page = 1, limit = 10) {
     const { data, error } = await this.supabase
       .from('stock_movements')
-      .select('*')
+      .select(`
+        *,
+        stock_batches(
+          product_id,
+          stock(
+            name
+          )
+        )
+      `)
       .eq('batch_id', batchId)
       .order('movement_date', { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
 
     if (error) throw new NotFoundException('No movements found');
+    return data;
+  }
+  async getMovements(
+    userId: string,
+    startDate?: string,
+    endDate?: string,
+    sort: 'asc' | 'desc' = 'desc'
+  ): Promise<StockMovementWithProductDto[]> {
+    let query = this.supabase
+      .from('stock_movements')
+      .select(`
+        *,
+        stock_batches(
+          product_id,
+          stock(
+            name
+          )
+        )
+      `)
+      .eq('user_id', userId)
+      // .order('movement_date', { ascending: false })
+    
+      if (startDate && endDate) {
+        query = query.gte('movement_date', startDate)
+                     .lte('movement_date', endDate);
+      }
+
+      query = query.order('movement_date', { ascending: sort === 'asc' });
+          
+      const { data, error } = await query;
+          
+      if (error) throw new InternalServerErrorException(error.message);
     return data;
   }
 
