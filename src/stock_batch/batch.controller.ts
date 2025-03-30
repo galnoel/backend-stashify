@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
-import { CreateStockBatchDto, StockBatch, CreateStockMovementDto } from './batch.entity';
+import { CreateStockBatchDto, StockBatch, CreateStockMovementDto, UpdateStockBatchDto } from './batch.entity';
 import { StockBatchService } from './batch.service';
 import { StockMovementService } from '../stock_movement/movement.service';
 import { JwtGuard } from '../auth/auth.guard';
@@ -53,4 +53,24 @@ export class StockBatchController {
   getBatch(@Param('id') batchId: string) {
     return this.stockBatchService.getBatch(batchId);
   }
-}
+
+   @Put(':id')
+    update(
+      @Param('id', ParseUUIDPipe) id: string,
+      @Body() updateDto: UpdateStockBatchDto,
+      @GetUser() user: {id: string},
+    ): Promise<StockBatch> {
+      return this.stockBatchService.update(id, updateDto, user.id);
+    }
+  
+    @Delete(':id')
+    remove(
+      @Param('id', ParseUUIDPipe) id: string,
+      @GetUser() user: {id: string},
+    ): Promise<void> {
+      return this.stockBatchService.remove(id, user.id);
+    }
+  }
+  
+  
+

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsInt, IsPositive, IsDateString, Length, IsEnum} from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, IsPositive, IsDateString, Length, IsEnum, IsOptional} from 'class-validator';
 
 export class StockBatch {
     id: string;
@@ -41,7 +41,12 @@ export class StockBatchWithProductDto {
   export class UpdateStockBatchDto {
     @IsInt()
     @IsPositive()
-    quantity: number;
+    @IsOptional()
+    quantity?: number;
+
+    @IsDateString()
+    @IsOptional()
+    expired_date?: string;
   }
 
   export class CreateStockMovementDto {  

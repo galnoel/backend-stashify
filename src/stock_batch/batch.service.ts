@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 import { SupabaseClient, createClient} from '@supabase/supabase-js';
 import { CreateStockBatchDto, StockBatch, StockBatchWithProductDto } from './batch.entity';
-import { CreateStockMovementDto } from './batch.entity';
+import { CreateStockMovementDto, UpdateStockBatchDto } from './batch.entity';
 
 @Injectable()
 export class StockBatchService {
@@ -115,4 +115,38 @@ export class StockBatchService {
     if (error) throw new NotFoundException('Batch not found');
     return data;
   }
+
+  async update(id: string, updateDto: UpdateStockBatchDto, userId: string): Promise<StockBatch> {
+      const { data, error } = await this.supabase
+        .from('stock_batches')
+        .update({ ...updateDto, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('user_id', userId) // Critical security check
+        .select()
+        .single();
+  
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new NotFoundException(`Stock batch not found. Details: ${error.message}`);
+        }
+        throw new Error(`Supabase error [${error.code}]: ${error.message}`);
+      }
+      return data;
+    }
+  
+    async remove(id: string, userId:string): Promise<void> {
+      const { error } = await this.supabase
+        .from('stock_batches')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userId); // Critical security check
+  
+      if (error) {
+        if (error.code === 'PGRST116') {
+          throw new NotFoundException(`Stock batch not found. Details: ${error.message}`);
+        }
+        throw new Error(`Supabase error [${error.code}]: ${error.message}`);
+      }
+    }
+  
 }
