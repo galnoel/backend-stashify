@@ -48,6 +48,7 @@ export class StockMovementService {
         *,
         stock_batches(
           product_id,
+          expired_date,
           stock(
             name
           )

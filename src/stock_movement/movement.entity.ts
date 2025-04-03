@@ -40,6 +40,7 @@ import {
     movement_date: Date;
     user_id: string;
     product_id: string;
+    expired_date: Date;
     // The joined product details
     products: {
       name: string;
