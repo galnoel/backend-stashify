@@ -66,3 +66,19 @@ export class UpdateStockItemDto {
   // @IsOptional()
   // expired_date?: Date;
 }
+
+export class CompetitorPriceDto {
+  user_id: string;
+  price: number;
+}
+
+export class MarketPriceComparisonItemDto {
+  name: string;
+  user_price: number;
+  competitorPrices: CompetitorPriceDto[];
+}
+
+export class MarketPriceComparisonResponseDto {
+  message: string;
+  data: MarketPriceComparisonItemDto[];
+}

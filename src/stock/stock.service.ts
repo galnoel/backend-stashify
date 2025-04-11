@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { CreateStockItemDto, StockItem, UpdateStockItemDto } from './stock.entity';
+import { CompetitorPriceDto, CreateStockItemDto, MarketPriceComparisonItemDto, MarketPriceComparisonResponseDto, StockItem, UpdateStockItemDto } from './stock.entity';
 import { userInfo } from 'os';
 
 @Injectable()
@@ -118,5 +118,71 @@ export class StockService {
       }
       throw new Error(`Supabase error [${error.code}]: ${error.message}`);
     }
+  }
+  async getMarketPriceComparison(userId: string): Promise<MarketPriceComparisonResponseDto> {
+    // Step 1: Get the current user's product names.
+    const { data: userProducts, error: userProductsError } = await this.supabase
+      .from('stock')
+      .select('name, price')
+      .eq('user_id', userId);
+
+    if (userProductsError) {
+      throw new InternalServerErrorException(userProductsError.message);
+    }
+
+    const userProductMap: Record<string, number> = {};
+    userProducts.forEach((item) => {
+      if (!userProductMap[item.name]) {
+        userProductMap[item.name] = item.price;
+      }
+    });
+
+    const productNames = Array.from(new Set(userProducts.map(item => item.name)));
+
+    if (productNames.length === 0) {
+      return {
+        message: 'No products found for market comparison',
+        data: [],
+      };
+    }
+
+    // Step 2: Query for products with matching names but from other users.
+    const { data: competitorProducts, error: competitorError } = await this.supabase
+      .from('stock')
+      .select('name, price, user_id')
+      .in('name', productNames)
+      .neq('user_id', userId);
+
+    if (competitorError) {
+      throw new InternalServerErrorException(competitorError.message);
+    }
+
+    // Step 3: Group the results by product name.
+    const groupedData: Record<string, CompetitorPriceDto[]> = {};
+    // Initialize the group with empty arrays.
+    for (const name of productNames) {
+      groupedData[name] = [];
+    }
+    competitorProducts.forEach((item) => {
+      groupedData[item.name].push({
+        user_id: item.user_id,
+        price: item.price,
+      });
+    });
+
+    // Transform the grouped data into an array of DTOs.
+    const result: MarketPriceComparisonItemDto[] = [];
+    for (const name of productNames) {
+      result.push({
+        name,
+        user_price: userProductMap[name],
+        competitorPrices: groupedData[name],
+      });
+    }
+
+    return {
+      message: 'Market comparison retrieved successfully',
+      data: result,
+    };
   }
 }

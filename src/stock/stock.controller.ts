@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
 import { StockService } from './stock.service';
-import { CreateStockItemDto, StockItem, UpdateStockItemDto } from './stock.entity';
+import { CreateStockItemDto, MarketPriceComparisonResponseDto, StockItem, UpdateStockItemDto } from './stock.entity';
 import { JwtGuard } from '../auth/auth.guard';
 import { GetUser } from '../auth/user.decorator';
 
@@ -50,6 +50,26 @@ export class StockController {
     @GetUser() user: {id: string},
   ): Promise<void> {
     return this.stockService.remove(id, user.id);
+  }
+
+  @Get('market')
+  getMarketPriceComparison(
+  @GetUser() user: { id: string },
+  ): Promise<MarketPriceComparisonResponseDto> {
+    return this.stockService.getMarketPriceComparison(user.id);
+  }
+}
+
+@Controller('market')
+@UseGuards(JwtGuard)//for all routes
+export class MarketController {
+  constructor(private readonly stockService: StockService) {}
+
+  @Get('')
+  getMarketPriceComparison(
+  @GetUser() user: { id: string },
+  ): Promise<MarketPriceComparisonResponseDto> {
+    return this.stockService.getMarketPriceComparison(user.id);
   }
 }
 

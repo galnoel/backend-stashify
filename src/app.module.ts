@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { StockController } from './stock/stock.controller';
+import { MarketController, StockController } from './stock/stock.controller';
 import { StockService } from './stock/stock.service';
 import { AuthController } from './auth/auth.contoller';
 import { AuthService } from './auth/auth.service';
@@ -21,7 +21,7 @@ import { ProfileService } from './profile/profile.service';
       global: true,
       secret: process.env.SUPABASE_JWT_SECRET,
 })],
-  controllers: [AppController, StockController, AuthController, StockBatchController, StockMovementController, DashboardController, ProfileController],
+  controllers: [AppController, StockController, AuthController, StockBatchController, StockMovementController, DashboardController, ProfileController, MarketController],
   providers: [AppService, StockService, AuthService, JwtStrategy, StockBatchService, StockMovementService, DashboardService, ProfileService],
 })
 export class AppModule {}
