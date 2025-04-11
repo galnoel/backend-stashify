@@ -14,3 +14,10 @@ export class UpdateProfileDto {
   @IsString()
   fullname?: string;
 }
+
+export class UserProfileResponseDto {
+  id: string;
+  email: string;
+  username: string;
+  fullname: string;
+}

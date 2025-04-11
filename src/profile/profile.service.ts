@@ -4,12 +4,13 @@ import {
     ConflictException,
     Injectable,
     InternalServerErrorException,
+    NotFoundException,
     UnauthorizedException,
   } from '@nestjs/common';
   import { SupabaseClient, createClient } from '@supabase/supabase-js';
   import { Response } from 'express';
   import { JwtService } from '@nestjs/jwt';
-  import { UpdateProfileDto} from './update-user.dto';
+  import { UpdateProfileDto, UserProfileResponseDto} from './profile.dto';
   
   @Injectable()
   export class ProfileService {
@@ -108,4 +109,38 @@ import {
         throw new InternalServerErrorException('User deletion failed');
       }
     }
+
+    async getProfile(userId: string): Promise<UserProfileResponseDto> {
+        try {
+          // Get auth user data (for email)
+          const { data: authUser, error: authError } = await this.supabaseAdmin.auth.admin.getUserById(userId);
+          
+          if (authError || !authUser) {
+            throw new NotFoundException('User not found');
+          }
+          
+          // Get profile data (for username and fullname)
+          const { data: profile, error: profileError } = await this.supabase
+            .from('profiles')
+            .select('username, fullname')
+            .eq('id', userId)
+            .single();
+          
+          if (profileError || !profile) {
+            throw new NotFoundException('User profile not found');
+          }
+          
+          return {
+            id: userId,
+            email: authUser.user.email ?? 'unknown@example.com',
+            username: profile.username,
+            fullname: profile.fullname
+          };
+        } catch (error) {
+          if (error instanceof NotFoundException) {
+            throw error;
+          }
+          throw new InternalServerErrorException('Failed to retrieve user data');
+        }
+      }
   }

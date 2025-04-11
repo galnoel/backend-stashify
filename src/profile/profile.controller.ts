@@ -1,6 +1,6 @@
 // auth.controller.ts
-import { Body, Controller, Delete, Param, Patch, Req, Res, UseGuards } from '@nestjs/common';
-import { UpdateProfileDto } from './update-user.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Req, Res, UseGuards } from '@nestjs/common';
+import { UpdateProfileDto } from './profile.dto';
 import { Request, Response } from 'express';
 import { JwtGuard } from '../auth/auth.guard';
 import { GetUser } from '../auth/user.decorator';
@@ -28,5 +28,12 @@ export class ProfileController {
     @Res() res: Response,
   ) {
     return this.profileService.deleteUser(user.id, res);
+  }
+
+  @Get('')
+  async getUser(
+    @GetUser() user: {id: string}
+  ) {
+    return this.profileService.getProfile(user.id);
   }
 }
