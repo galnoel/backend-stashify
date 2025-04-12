@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, Query, Req } from '@nestjs/common';
 import { StockService } from './stock.service';
-import { CreateStockItemDto, MarketPriceComparisonResponseDto, StockItem, UpdateStockItemDto } from './stock.entity';
+import { CreateStockItemDto, DailyPriceIncreasePerProductResponseDto, MarketPriceComparisonResponseDto, ProductDashboardResponseDto, StockItem, UpdateStockItemDto, WeeklyPriceIncreasePerProductResponseDto } from './stock.entity';
 import { JwtGuard } from '../auth/auth.guard';
 import { GetUser } from '../auth/user.decorator';
 
@@ -70,6 +70,33 @@ export class MarketController {
   @GetUser() user: { id: string },
   ): Promise<MarketPriceComparisonResponseDto> {
     return this.stockService.getMarketPriceComparison(user.id);
+  }
+
+  @Get('weekly-product')
+  async getWeeklyPriceIncreaseGroupedByProduct(@Req() req): Promise<WeeklyPriceIncreasePerProductResponseDto> {
+    // Assuming req.user contains the authenticated user's details.
+    const userId = req.user?.id || 'default_user_id';
+    return this.stockService.getWeeklyPriceIncreaseGroupedByProduct(userId);
+  }
+
+  /**
+   * GET /dashboard/daily-product
+   * Returns the daily price increase per product.
+   */
+  @Get('daily-product')
+  async getDailyPriceIncreaseGroupedByProduct(@Req() req): Promise<DailyPriceIncreasePerProductResponseDto> {
+    const userId = req.user?.id || 'default_user_id';
+    return this.stockService.getDailyPriceIncreaseGroupedByProduct(userId);
+  }
+
+  @Get('dashboard/:productId')
+  async getProductDashboard(
+    @Param('productId') productId: string,
+    @Req() req
+  ): Promise<ProductDashboardResponseDto> {
+    // Retrieve authenticated user's id (or use a default for testing)
+    const userId = req.user?.id || 'default_user_id';
+    return this.stockService.getProductDashboard(userId, productId);
   }
 }
 

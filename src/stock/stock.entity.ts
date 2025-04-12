@@ -83,3 +83,43 @@ export class MarketPriceComparisonResponseDto {
   message: string;
   data: MarketPriceComparisonItemDto[];
 }
+
+// Daily price increase per product
+export interface DailyPriceIncreasePerProductItemDto {
+  product: string;
+  percentage: number;
+}
+
+export interface DailyPriceIncreasePerProductResponseDto {
+  message: string;
+  data: DailyPriceIncreasePerProductItemDto[];
+}
+
+// Weekly price increase per product (daily break-down for each product)
+export interface WeeklyPriceIncreaseItemDto {
+  day: string;         // e.g., "Monday"
+  percentage: number;  // e.g., 2.0 for a 2% change
+}
+
+export interface WeeklyPriceIncreasePerProductItemDto {
+  product: string;
+  dailyIncreases: WeeklyPriceIncreaseItemDto[];
+}
+
+export interface WeeklyPriceIncreasePerProductResponseDto {
+  message: string;
+  data: WeeklyPriceIncreasePerProductItemDto[];
+}
+
+export class ProductDashboardResponseDto {
+  message: string;
+  data: {
+    marketComparison: MarketPriceComparisonItemDto;
+    weeklyIncrease: {
+      dailyIncreases: { day: string; percentage: number }[];
+    };
+    dailyIncrease: {
+      percentage: number | null; // null if not available
+    };
+  };
+}
