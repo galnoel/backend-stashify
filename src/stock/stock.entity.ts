@@ -69,6 +69,7 @@ export class UpdateStockItemDto {
 
 export class CompetitorPriceDto {
   user_id: string;
+  username: string;
   price: number;
 }
 

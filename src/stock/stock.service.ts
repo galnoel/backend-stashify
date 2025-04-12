@@ -149,9 +149,9 @@ export class StockService {
     // Step 2: Query for products with matching names but from other users.
     const { data: competitorProducts, error: competitorError } = await this.supabase
       .from('stock')
-      .select('name, price, user_id')
+      .select('name, price, user_id, profiles(username)')
       .in('name', productNames)
-      .neq('user_id', userId);
+      .neq('user_id', userId) as { data: { name: string; price: number; user_id: string; profiles?: { username: string } }[] | null, error: any };
 
     if (competitorError) {
       throw new InternalServerErrorException(competitorError.message);
@@ -163,10 +163,11 @@ export class StockService {
     for (const name of productNames) {
       groupedData[name] = [];
     }
-    competitorProducts.forEach((item) => {
+    competitorProducts?.forEach((item) => {
       groupedData[item.name].push({
         user_id: item.user_id,
         price: item.price,
+        username: item.profiles?.username || 'unknown',
       });
     });
 
