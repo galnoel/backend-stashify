@@ -15,13 +15,15 @@ import { DashboardController } from './dashboard/dashboard.controller';
 import { DashboardService } from './dashboard/dashboard.service';
 import { ProfileController} from './profile/profile.controller';
 import { ProfileService } from './profile/profile.service';
+import { AnnouncementController } from './announcement/announcement.controller';
+import { AnnouncementService } from './announcement/announcement.service';
 @Module({
   imports: [
     JwtModule.register({
       global: true,
       secret: process.env.SUPABASE_JWT_SECRET,
 })],
-  controllers: [AppController, StockController, AuthController, StockBatchController, StockMovementController, DashboardController, ProfileController, MarketController],
-  providers: [AppService, StockService, AuthService, JwtStrategy, StockBatchService, StockMovementService, DashboardService, ProfileService],
+  controllers: [AppController, StockController, AuthController, StockBatchController, StockMovementController, DashboardController, ProfileController, MarketController, AnnouncementController],
+  providers: [AppService, StockService, AuthService, JwtStrategy, StockBatchService, StockMovementService, DashboardService, ProfileService, AnnouncementService],
 })
 export class AppModule {}
